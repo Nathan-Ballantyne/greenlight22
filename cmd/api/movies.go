@@ -3,15 +3,10 @@ package main
 import (
 	"fmt"
 	"net/http"
-	"strings"
 	"time"
 
 	"github.com/Nathan-Ballantyne/greenlight22/internal/data"
 	"github.com/Nathan-Ballantyne/greenlight22/internal/validator"
-)
-
-const (
-	errMustBeProvided = "must be provided"
 )
 
 func (app *application) createMovieHandler(w http.ResponseWriter, r *http.Request) {
@@ -28,24 +23,16 @@ func (app *application) createMovieHandler(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
+	movie := &data.Movie{
+		Title:   input.Title,
+		Year:    input.Year,
+		Runtime: input.Runtime,
+		Genres:  input.Genres,
+	}
+
 	v := validator.New()
 
-	v.Check(strings.TrimSpace(input.Title) != "", "title", errMustBeProvided)
-	v.Check(len(input.Title) <= 500, "title", "must not be more than 500 bytes long")
-
-	v.Check(input.Year != 0, "year", errMustBeProvided)
-	v.Check(input.Year >= 1888, "year", "must be greater then 1888")
-	v.Check(input.Year <= int32(time.Now().Year()), "year", "must not be in the future")
-
-	v.Check(input.Runtime != 0, "runtime", errMustBeProvided)
-	v.Check(input.Runtime > 0, "runtime", "must be a positive integer")
-
-	v.Check(input.Genres != nil, "genres", errMustBeProvided)
-	v.Check(len(input.Genres) >= 1, "genres", "must contain at least 1 genre")
-	v.Check(len(input.Genres) <= 5, "genres", "must not contain more than 5 genres")
-	v.Check(validator.Unique(input.Genres), "genres", "must not contain duplicate values")
-
-	if !v.Valid() {
+	if data.ValidateMovie(v, movie); !v.Valid() {
 		app.failedValidationResponse(w, r, v.Errors)
 	}
 
