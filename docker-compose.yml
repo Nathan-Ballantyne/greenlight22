@@ -1,0 +1,18 @@
+version: '3.9'
+
+services:
+  pg:
+    image: postgres
+    restart: always
+    expose: 
+      - "5432"
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_DB=greenlight
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      - greenlight-pgdata:/var/lib/postgresql/data 
+volumes:
+  greenlight-pgdata:
