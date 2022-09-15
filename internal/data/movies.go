@@ -1,6 +1,7 @@
 package data
 
 import (
+	"database/sql"
 	"strings"
 	"time"
 
@@ -15,6 +16,27 @@ type Movie struct {
 	Runtime   Runtime   `json:"runtime,omitempty"` // Movie runtime in minutes
 	Genres    []string  `json:"genres,omitempty"`
 	Version   int32     `json:"version"` // The version number starts at 1 and will be incremented each time the movie information is updated
+}
+
+// struct that wraps an sql.DB connection pool
+type MovieModel struct {
+	DB *sql.DB
+}
+
+func (m MovieModel) Insert(movie *Movie) error {
+	return nil
+}
+
+func (m MovieModel) Get(id int64) (*Movie, error) {
+	return nil, nil
+}
+
+func (m MovieModel) Update(movie *Movie) error {
+	return nil
+}
+
+func (m MovieModel) Delete(id int64) error {
+	return nil
 }
 
 func ValidateMovie(v *validator.Validator, movie *Movie) {
